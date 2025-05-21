@@ -27,24 +27,114 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 600px;
+    max-width: 400px;
+    margin: 30px auto;
     padding: 20px;
     background-color: rgb(152, 251, 203);
     border-radius: 8px;
     box-shadow: var(--box-shadow);
+
 }
 
 h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+    letter-spacing: 1px;
+    margin: 0;
     color: rgb(11, 19, 43);
     text-align: center;
+
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 10px;
     color: rgb(91, 192, 190);
     text-align: center;
     text-transform: uppercase;
+}
+
+#header {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: rgb(91, 192, 190);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h3 {
+    border-bottom: 1px solid #bbb;
+    padding-bottom: 10px;
+    margin: 40 0 10px;
+}
+
+
+h4 {
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.inc-exp-container {
+    background-color: rgb(91, 192, 190);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    width: 80%;
+    max-width: 300px;
+    margin: 20px 0;
+}
+
+.inc-exp-container>div {
+    flex: 1;
+    text-align: center;
+}
+
+
+.inc-exp-container>div:first-of-type {
+    border-right: 1px solid #dedede;
+}
+
+
+
+/* .money {
+    font-size: 2;
+    letter-spacing: 1px;
+    margin: 5px 0;
+} */
+
+.money-income {
+    color: rgb(144, 255, 144);
+}
+
+.money-outcome {
+    color: rgb(255, 0, 0);
+}
+
+label {
+    display: inline-block;
+    margin: 10px 0;
+
+}
+
+input[type="text"],
+input[type="number"] {
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    display: block;
+    font-size: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.button {
+    cursor: pointer;
+    background-color: rgb(91, 192, 190);
+    color: #fff;
+    box-shadow: var(--box-shadow);
+    border: 0;
+    display: block;
+    font-size: 16px;
+    margin: 10px 0 30px;
+    padding: 10px;
+    width: 100%;
 }
