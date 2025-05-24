@@ -1,4 +1,101 @@
 :root {
+    --bg-color: rgb(11, 19, 43);
+    --text-color: rgb(111, 255, 233);
+    --main-color: rgb(152, 251, 203);
+    --darkBlue-color: rgb(28, 37, 65);
+    --midBlue-color: rgb(58, 80, 107);
+}
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+
+
+body {
+    padding: 2rem;
+    font-family: "Poppins", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--midBlue-color);
+
+}
+
+h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+main {
+    max-width: 400px;
+    margin: 1rem auto;
+    background-color: var(--midBlue-color);
+    padding: 1rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+header div {
+    padding: 5px;
+
+}
+
+header div:first-child {
+    flex-basis: 100%;
+    font-size: 2.25rem;
+    font-weight: 600;
+
+}
+
+header div:nth-child(n + 2) {
+    flex-basis: 50%;
+    font-size: 1.25rem;
+    font-weight: 500;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* :root {
     --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
         0 1px 2px rgba(0, 0, 0, 0.24);
 
@@ -102,7 +199,7 @@ h4 {
     font-size: 2;
     letter-spacing: 1px;
     margin: 5px 0;
-} */
+} 
 
 .money-income {
     color: rgb(144, 255, 144);
@@ -200,3 +297,5 @@ input[type="number"] {
 .list li:hover .delete-btn {
     opacity: 1;
 }
+
+*/
