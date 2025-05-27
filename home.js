@@ -1,57 +1,85 @@
-// const balance = document.getElementById('balance');
 
-// const money_income = document.getElementById('money-income');
-// const money_outcome = document.getElementById('money-outcome');
+const transactions = [
+    {
+        id: 1,
+        name: 'Salary',
+        amount: 45000,
+        date: new Date(),
+        type: 'income'
+    },
+    {
+        id: 2,
+        name: 'Grocery',
+        amount: 743,
+        date: new Date(),
+        type: 'expence'
+    },
+    {
+        id: 3,
+        name: 'Fitness',
+        amount: 1500,
+        date: new Date(),
+        type: 'expence'
+    },
 
-// const list = document.getElementById('list');
-// const form = document.getElementById('list');
-// const rext = document.getElementById('text');
-// const amount = document.getElementById('amount');
+];
+
+const formatter = new Intl.NumberFormat('cz-CZ', {
+    style: 'currency',
+    currency: 'CZK',
+    signDisplay: "always",
+})
 
 
-// const scamTransactions = [
-//     { id: 1, text: 'Grocery', amount: -560 },
-//     { id: 2, text: 'Salary', amount: -25000 },
-//     { id: 3, text: 'Cinema', amount: -210 },
-//     { id: 4, text: 'Gym', amount: -350 }
-// ];
 
-// let Transactions = scamTransactions;
+const list = document.getElementById("transactionsList");
 
-// function addTransactionDom(transaction) {
-//     const sign = transaction[0].amount < 0 ? "-" : "+";
-//     const item = document.createElement("li");
-
-//     item.classList.add(
-//         transaction[0].amount < 0 ? "outcome" : "income"
-//     )
+const status = document.getElementById("status");
 
 
-//     item.innerHTML = `
-//     ${transaction[0].text}<span>${sign}${Math.abs(transaction[0].amount)}</span>
-//     <button class="delete-btn" onclik="">X</button>
-//     `;
+function listLoader() {
+    list.innerHTML = "";
 
-//     list.appendChild(item);
-// }
+    if (transactions.length === 0) {
+        status.textContent = "No transactions found";
+        return;
+    }
 
-// //Function to update the balance, income and outcome
+    transactions.forEach((transactions) => {
+        const item = document.createElement("li");
+        item.classList.add(transactions.type);
 
-// function updateValues() {
-//     const amounts = Transactions.map(transaction => transaction.amount);
-//     const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(3);
-//     const income = amounts.filter(item => item > 0).reduce((acc, item) => (acc += item), 0).toFixed(3);
-//     const outcome = (amounts.filter(item => item < 0).reduce((acc, item) => (acc += item), 0) * -1).toFixed(3);
-// }
 
-// //Function to initiate app
+        let formattedAmount = formatter.format(transactions.amount);
+        formattedAmount = formattedAmount.replace("CZK", "").trim() + " Kč";
 
-// function InitiationApp() {
-//     list.innerHTML = ""
-//     Transactions.forEach(addTransactionDom);
-//     updateValues();
+        item.innerHTML = `
+            <div class="name">
+                <h4>${transactions.name}</h4>
+                <p>${new Date(transactions.date).toLocaleDateString()}</p>
+            </div>
 
-// }
+            <div class="amount"> 
+                <span> ${formattedAmount}</span>
+            </div >
 
-// addTransactionDom(Transactions);
+            <div class="action">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" onclick="deleteTransaction(${transactions.id})">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+            </div>
+        `;
+
+        list.appendChild(item)
+
+    });
+}
+
+
+listLoader();
+
+function deleteTransaction(id) {
+    // alert("Are you sure you want to delete this transaction?");
+}
+
 
