@@ -1,56 +1,55 @@
 
-const transactions = [
-    {
-        id: 1,
-        name: 'Salary',
-        amount: 45000,
-        date: new Date(),
-        type: 'income'
-    },
-    {
-        id: 2,
-        name: 'Grocery',
-        amount: 743,
-        date: new Date(),
-        type: 'expence'
-    },
-    {
-        id: 3,
-        name: 'Fitness',
-        amount: 1500,
-        date: new Date(),
-        type: 'expence'
-    },
+const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-];
-
-const formatter = new Intl.NumberFormat('cz-CZ', {
+const formatter = new Intl.NumberFormat('cs-CZ', {
     style: 'currency',
     currency: 'CZK',
-    signDisplay: "always",
-})
-
-
+    signDisplay: "always"
+});
 
 const list = document.getElementById("transactionsList");
-
+const form = document.getElementById("transaction-form");
 const status = document.getElementById("status");
+const balance = document.getElementById("balance");
+const income = document.getElementById("income");
+const expence = document.getElementById("expence");
 
+form.addEventListener("submit", addTransaction);
+
+
+function updateBalance() {
+    const totalIncome = transactions
+        .filter(transaction => transaction.type === "income")
+        .reduce((total, transaction) => total + transaction.amount, 0);
+
+    const totalExpence = transactions
+        .filter(transaction => transaction.type === "expence")
+        .reduce((total, transaction) => total + transaction.amount, 0);
+
+    const totalBalance = totalIncome - totalExpence;
+
+    balance.textContent = formatter.format(totalBalance).replace("CZK", "").trim() + " Kč";
+    income.textContent = formatter.format(totalIncome).replace("CZK", "").trim() + " Kč";
+    expence.textContent = formatter.format(-totalExpence).replace("CZK", "").trim() + " Kč";
+}
 
 function listLoader() {
     list.innerHTML = "";
 
+    status.textContent = "";
     if (transactions.length === 0) {
         status.textContent = "No transactions found";
         return;
     }
 
     transactions.forEach((transactions) => {
+        const sign = "income" === transactions.type ? 1 : -1;
         const item = document.createElement("li");
         item.classList.add(transactions.type);
 
 
-        let formattedAmount = formatter.format(transactions.amount);
+        const signedAmount = transactions.amount * sign;
+        let formattedAmount = formatter.format(signedAmount);
         formattedAmount = formattedAmount.replace("CZK", "").trim() + " Kč";
 
         item.innerHTML = `
@@ -75,11 +74,48 @@ function listLoader() {
     });
 }
 
-
 listLoader();
+updateBalance();
 
 function deleteTransaction(id) {
+
+    const transactionIndex = transactions.findIndex(transaction => transaction.id === id);
+    transactions.splice(transactionIndex, 1);
     // alert("Are you sure you want to delete this transaction?");
+
+    updateBalance();
+    saveTransactions();
+    listLoader();
+}
+
+
+function addTransaction(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const fData = new FormData(form);
+    transactions.push({
+        id: transactions.length + 1,
+        name: fData.get("name"),
+        amount: parseFloat(fData.get("amount")),
+        date: new Date(fData.get("date")),
+        type: 'on' === fData.get("type") ? "income" : "expence",
+    });
+
+    form.reset();
+
+
+    updateBalance();
+    saveTransactions();
+    listLoader();
+}
+
+function saveTransactions() {
+    transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+
+
 }
 
 
