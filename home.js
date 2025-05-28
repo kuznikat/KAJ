@@ -9,13 +9,23 @@ const formatter = new Intl.NumberFormat('cs-CZ', {
 
 const list = document.getElementById("transactionsList");
 const form = document.getElementById("transaction-form");
+const categorySelect = document.getElementById("category");
+const categoryFilter = document.getElementById("category-filter");
+const customFields = document.getElementById("custom-category-fields");
+const customEmoji = document.getElementById("custom-emoji");
+const customName = document.getElementById("custom-name");
 const formError = document.getElementById("form-error");
 const status = document.getElementById("status");
 const balance = document.getElementById("balance");
 const income = document.getElementById("income");
 const expence = document.getElementById("expence");
 
+
+
 form.addEventListener("submit", addTransaction);
+categoryFilter.addEventListener("change", listLoader);
+
+
 
 
 function updateBalance() {
@@ -29,12 +39,10 @@ function updateBalance() {
 
     const totalBalance = totalIncome - totalExpence;
 
-    balance.textContent = formatter.format(totalBalance).replace("CZK", "").trim() + " Kč";
-    income.textContent = formatter.format(totalIncome).replace("CZK", "").trim() + " Kč";
-    expence.textContent = formatter.format(-totalExpence).replace("CZK", "").trim() + " Kč";
+    balance.textContent = formatter.format(totalBalance);
+    income.textContent = formatter.format(totalIncome);
+    expence.textContent = formatter.format(-totalExpence);
 }
-
-
 
 
 function listLoader() {
@@ -47,7 +55,12 @@ function listLoader() {
         return;
     }
 
-    transactions.forEach((transactions) => {
+    const selectedFilter = categoryFilter.value;
+    const filtered = selectedFilter === "all"
+        ? transactions
+        : transactions.filter(tx => tx.category === selectedFilter);
+
+    filtered.forEach((transactions) => {
         const sign = "income" === transactions.type ? 1 : -1;
         const item = document.createElement("li");
         item.classList.add(transactions.type);
@@ -55,12 +68,13 @@ function listLoader() {
 
         const signedAmount = transactions.amount * sign;
         let formattedAmount = formatter.format(signedAmount);
-        formattedAmount = formattedAmount.replace("CZK", "").trim() + " Kč";
+        // formattedAmount = formattedAmount.replace("CZK", "").trim() + " Kč";
 
         item.innerHTML = `
             <div class="name">
                 <h4>${transactions.name}</h4>
                 <p>${new Date(transactions.date).toLocaleDateString()}</p>
+                <p class="category-tag">${transactions.category}</p>
             </div>
 
             <div class="amount"> 
@@ -82,6 +96,8 @@ function listLoader() {
 listLoader();
 updateBalance();
 
+
+
 function deleteTransaction(id) {
     if (!confirm("Are you sure you want to delete this transaction?")) return;
 
@@ -93,12 +109,40 @@ function deleteTransaction(id) {
     listLoader();
 }
 
+const checkbox = document.getElementById("type");
+checkbox.addEventListener("change", () => {
+    checkbox.setAttribute("aria-label", checkbox.checked
+        ? "Transaction type: Income selected"
+        : "Transaction type: Expense selected");
+});
+
+
+categorySelect.addEventListener("change", () => {
+    if (categorySelect.value === "__custom__") {
+        customFields.style.display = "block";
+    } else {
+        customFields.style.display = "none";
+    }
+});
+
+const CUSTOM_CATEGORIES_KEY = "customCategories";
+
+let customCategories = JSON.parse(localStorage.getItem(CUSTOM_CATEGORIES_KEY)) || [];
+
+function saveCustomCategories() {
+    localStorage.setItem(CUSTOM_CATEGORIES_KEY, JSON.stringify(customCategories));
+}
+
+
 
 function addTransaction(e) {
     e.preventDefault();
 
+
     const form = e.target;
     const fData = new FormData(form);
+    document.getElementById("date").max = new Date().toISOString().split("T")[0];
+
 
 
     const name = fData.get("name").trim();
@@ -115,7 +159,7 @@ function addTransaction(e) {
     // Name must NOT contain special characters
     const nameHasSpecialChar = /[^a-zA-Z0-9á-žÁ-Ž\s]/.test(name);
 
-    //     formError.textContent = "";
+    formError.textContent = "";
 
     if (
         !name ||
@@ -130,12 +174,39 @@ function addTransaction(e) {
         return;
     }
 
+    let category;
+
+    if (categorySelect.value === "__custom__") {
+        const emoji = customEmoji.value.trim();
+        const categoryName = customName.value.trim();
+
+        if (!emoji || !categoryName) {
+            formError.textContent = "Please fill in both custom emoji and name.";
+            return;
+        }
+
+        category = `${emoji} ${categoryName}`;
+
+        // Check if category already exists
+        const exists = customCategories.some(cat => cat === category);
+        if (!exists) {
+            customCategories.push(category);
+            saveCustomCategories();
+            addCategoryOptionToSelect(category);
+            addCategoryToFilterDropdown(category);
+        }
+    } else {
+        category = categorySelect.value;
+    }
+
     transactions.push({
         id: transactions.length + 1,
         name,
         amount,
         date: new Date(date),
         type: 'on' === fData.get("type") ? "income" : "expence",
+        category,
+
     });
 
     form.reset();
@@ -144,6 +215,42 @@ function addTransaction(e) {
     listLoader();
 }
 
+function addCategoryOptionToSelect(cat) {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    categorySelect.insertBefore(option, categorySelect.querySelector('option[value="__custom__"]'));
+}
+
+customCategories.forEach(addCategoryOptionToSelect);
+
+function addCategoryToFilterDropdown(cat) {
+    const filter = document.getElementById("category-filter");
+
+    // Skip if already present
+    if ([...filter.options].some(opt => opt.value === cat)) return;
+
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    filter.appendChild(opt);
+}
+
+
+function refreshCategoryFilter() {
+    const uniqueCategories = [
+        ...new Set(transactions.map(tx => tx.category))
+    ];
+    const filter = document.getElementById("category-filter");
+    filter.innerHTML = '<option value="all">All</option>';
+    uniqueCategories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        filter.appendChild(opt);
+    });
+}
+refreshCategoryFilter();
 
 
 function saveTransactions() {
@@ -155,5 +262,4 @@ function saveTransactions() {
         status.textContent = "Failed to save data.";
     }
 }
-
 
