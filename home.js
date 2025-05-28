@@ -9,6 +9,7 @@ const formatter = new Intl.NumberFormat('cs-CZ', {
 
 const list = document.getElementById("transactionsList");
 const form = document.getElementById("transaction-form");
+const formError = document.getElementById("form-error");
 const status = document.getElementById("status");
 const balance = document.getElementById("balance");
 const income = document.getElementById("income");
@@ -33,10 +34,14 @@ function updateBalance() {
     expence.textContent = formatter.format(-totalExpence).replace("CZK", "").trim() + " Kč";
 }
 
+
+
+
 function listLoader() {
     list.innerHTML = "";
 
     status.textContent = "";
+
     if (transactions.length === 0) {
         status.textContent = "No transactions found";
         return;
@@ -78,10 +83,10 @@ listLoader();
 updateBalance();
 
 function deleteTransaction(id) {
+    if (!confirm("Are you sure you want to delete this transaction?")) return;
 
     const transactionIndex = transactions.findIndex(transaction => transaction.id === id);
     transactions.splice(transactionIndex, 1);
-    // alert("Are you sure you want to delete this transaction?");
 
     updateBalance();
     saveTransactions();
@@ -94,28 +99,61 @@ function addTransaction(e) {
 
     const form = e.target;
     const fData = new FormData(form);
+
+
+    const name = fData.get("name").trim();
+    const amount = parseFloat(fData.get("amount"));
+    const date = fData.get("date");
+
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Name must contain at least one letter (including Czech letters)
+    const nameHasLetter = /[a-zA-Zá-žÁ-Ž]/.test(name);
+
+    // Name must NOT contain special characters
+    const nameHasSpecialChar = /[^a-zA-Z0-9á-žÁ-Ž\s]/.test(name);
+
+    //     formError.textContent = "";
+
+    if (
+        !name ||
+        !nameHasLetter ||
+        nameHasSpecialChar ||
+        isNaN(amount) ||
+        amount <= 0 ||
+        !date ||
+        selectedDate > today
+    ) {
+        formError.textContent = "No numbers-only names, no special characters allowed.";
+        return;
+    }
+
     transactions.push({
         id: transactions.length + 1,
-        name: fData.get("name"),
-        amount: parseFloat(fData.get("amount")),
-        date: new Date(fData.get("date")),
+        name,
+        amount,
+        date: new Date(date),
         type: 'on' === fData.get("type") ? "income" : "expence",
     });
 
     form.reset();
-
-
     updateBalance();
     saveTransactions();
     listLoader();
 }
 
+
+
 function saveTransactions() {
-    transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-
-
+    try {
+        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        localStorage.setItem("transactions", JSON.stringify(transactions));
+    } catch (error) {
+        console.error("Error saving transactions:", error);
+        status.textContent = "Failed to save data.";
+    }
 }
 
 
