@@ -203,6 +203,18 @@ label[for="category"] {
     margin-bottom: 4px;
 }
 
+/* .custom-category-fields {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1rem;
+} */
+
+/* #custom-emoji {
+    width: 60px;
+    text-align: center;
+} */
+
 ul {
     list-style: none;
 }
@@ -283,6 +295,89 @@ ul li:hover .action {
     margin-bottom: 0.5rem;
 
 
+}
+
+.edit-btn {
+    background: transparent;
+    border: none;
+    color: rgb(175, 4, 4);
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.edit-btn:hover {
+    transform: scale(1.2);
+}
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: var(--midBlue-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    color: var(--text-color);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-content select {
+    padding: 8px;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-actions button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#confirm-delete-btn {
+    background: #ff4f4f;
+    color: #fff;
+}
+
+#cancel-delete-btn {
+    background: #ccc;
+    color: #000;
+}
+
+
+footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-color);
+    margin-top: 1rem;
 }
 
 /* Responsive Design for Mobile */

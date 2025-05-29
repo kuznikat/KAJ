@@ -9,7 +9,23 @@ const formatter = new Intl.NumberFormat('cs-CZ', {
 
 const list = document.getElementById("transactionsList");
 const form = document.getElementById("transaction-form");
+
+
+const dateInput = document.getElementById("date");
+const today = new Date().toISOString().split("T")[0];
+dateInput.max = today;
+
+
 const categorySelect = document.getElementById("category");
+categorySelect.addEventListener("change", () => {
+    if (categorySelect.value === "__custom__") {
+        customFields.style.display = "block";
+    } else {
+        customFields.style.display = "none";
+    }
+});
+
+
 const categoryFilter = document.getElementById("category-filter");
 const customFields = document.getElementById("custom-category-fields");
 const customEmoji = document.getElementById("custom-emoji");
@@ -19,6 +35,22 @@ const status = document.getElementById("status");
 const balance = document.getElementById("balance");
 const income = document.getElementById("income");
 const expence = document.getElementById("expence");
+
+
+const deleteModal = document.getElementById("delete-modal");
+const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+const cancelDeleteBtn = document.getElementById("cancel-delete-btn");
+
+const modal = document.getElementById("edit-modal");
+const editType = document.getElementById("edit-type");
+const editName = document.getElementById("edit-name");
+const editAmount = document.getElementById("edit-amount");
+const editDate = document.getElementById("edit-date");
+const editError = document.getElementById("edit-error");
+const editCategory = document.getElementById("edit-category");
+const saveEditBtn = document.getElementById("save-edit-btn");
+const cancelEditBtn = document.getElementById("cancel-edit-btn");
+
 
 
 
@@ -72,7 +104,7 @@ function listLoader() {
 
         item.innerHTML = `
             <div class="name">
-                <h4>${transactions.name}</h4>
+                <h4>${transactions.name} <button class="edit-btn" onclick="editTransaction(${transactions.id})">✏️</button></h4>
                 <p>${new Date(transactions.date).toLocaleDateString()}</p>
                 <p class="category-tag">${transactions.category}</p>
             </div>
@@ -92,14 +124,16 @@ function listLoader() {
 
     });
 }
-
+refreshCategoryFilter();
 listLoader();
 updateBalance();
 
 
+let pendingDeleteId = null;
 
 function deleteTransaction(id) {
-    if (!confirm("Are you sure you want to delete this transaction?")) return;
+    pendingDeleteId = id;
+    deleteModal.classList.remove("hidden");
 
     const transactionIndex = transactions.findIndex(transaction => transaction.id === id);
     transactions.splice(transactionIndex, 1);
@@ -117,13 +151,26 @@ checkbox.addEventListener("change", () => {
 });
 
 
-categorySelect.addEventListener("change", () => {
-    if (categorySelect.value === "__custom__") {
-        customFields.style.display = "block";
-    } else {
-        customFields.style.display = "none";
+
+
+
+confirmDeleteBtn.addEventListener("click", () => {
+    const index = transactions.findIndex(t => t.id === pendingDeleteId);
+    if (index !== -1) {
+        transactions.splice(index, 1);
+        saveTransactions();
+        updateBalance();
+        listLoader();
     }
+    deleteModal.classList.add("hidden");
 });
+
+cancelDeleteBtn.addEventListener("click", () => {
+    deleteModal.classList.add("hidden");
+    pendingDeleteId = null;
+});
+
+
 
 const CUSTOM_CATEGORIES_KEY = "customCategories";
 
@@ -141,8 +188,6 @@ function addTransaction(e) {
 
     const form = e.target;
     const fData = new FormData(form);
-    document.getElementById("date").max = new Date().toISOString().split("T")[0];
-
 
 
     const name = fData.get("name").trim();
@@ -213,9 +258,82 @@ function addTransaction(e) {
     updateBalance();
     saveTransactions();
     listLoader();
+    refreshCategoryFilter();
 }
 
+
+let currentEditId = null;
+
+function editTransaction(id) {
+    const transaction = transactions.find(t => t.id === id);
+    if (!transaction) return;
+
+    currentEditId = id;
+
+    editName.value = transaction.name;
+    editAmount.value = transaction.amount;
+    editDate.value = new Date(transaction.date).toISOString().split("T")[0];
+    editType.value = transaction.type;
+
+
+    // Load category options
+    editCategory.innerHTML = [...categorySelect.options]
+        .filter(opt => !opt.disabled)
+        .map(opt => `<option value="${opt.value}">${opt.textContent}</option>`)
+        .join("");
+    editCategory.value = transaction.category;
+
+    editError.textContent = "";
+    modal.classList.remove("hidden");
+}
+
+saveEditBtn.addEventListener("click", () => {
+    const transaction = transactions.find(t => t.id === currentEditId);
+    if (!transaction) return;
+
+    const name = editName.value.trim();
+    const amount = parseFloat(editAmount.value);
+    const date = editDate.value;
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (
+        !name ||
+        isNaN(amount) ||
+        amount <= 0 ||
+        !date ||
+        selectedDate > today
+    ) {
+        editError.textContent = "Fill all fields correctly. No future dates.";
+        return;
+    }
+
+    transaction.name = name;
+    transaction.amount = amount;
+    transaction.date = new Date(date);
+    transaction.type = editType.value;
+    transaction.category = editCategory.value;
+
+    saveTransactions();
+    updateBalance();
+    listLoader();
+    modal.classList.add("hidden");
+});
+
+
+cancelEditBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+});
+
+
+
+
+
+
 function addCategoryOptionToSelect(cat) {
+    if (!cat || typeof cat !== "string" || cat.trim() === "") return;
+
     const option = document.createElement("option");
     option.value = cat;
     option.textContent = cat;
@@ -225,6 +343,8 @@ function addCategoryOptionToSelect(cat) {
 customCategories.forEach(addCategoryOptionToSelect);
 
 function addCategoryToFilterDropdown(cat) {
+    if (!cat || typeof cat !== "string" || cat.trim() === "") return;
+
     const filter = document.getElementById("category-filter");
 
     // Skip if already present
@@ -244,13 +364,14 @@ function refreshCategoryFilter() {
     const filter = document.getElementById("category-filter");
     filter.innerHTML = '<option value="all">All</option>';
     uniqueCategories.forEach(cat => {
+        if (!cat || typeof cat !== "string" || cat.trim() === "") return;
         const opt = document.createElement("option");
         opt.value = cat;
         opt.textContent = cat;
         filter.appendChild(opt);
     });
 }
-refreshCategoryFilter();
+
 
 
 function saveTransactions() {
