@@ -1,0 +1,401 @@
+:root {
+    --bg-color: rgb(11, 19, 43);
+    --text-color: rgb(111, 255, 233);
+    --main-color: rgb(152, 251, 203);
+    --darkBlue-color: rgb(28, 37, 65);
+    --midBlue-color: rgb(58, 80, 107);
+}
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+
+
+body {
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: #fff;
+
+}
+
+h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+h3,
+header,
+ul {
+    margin-bottom: 0.5rem;
+}
+
+main {
+    max-width: 400px;
+    height: auto;
+    margin: 1rem auto;
+    background-color: var(--midBlue-color);
+    padding: 1rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+header div {
+    padding: 5px;
+
+}
+
+header div:first-child {
+    flex-basis: 100%;
+    font-size: 2.25rem;
+    font-weight: 600;
+
+}
+
+header div:nth-child(n + 2) {
+    flex-basis: 50%;
+    font-size: 1.25rem;
+    font-weight: 500;
+
+}
+
+header h5 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+form input:not(#type),
+
+form button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    height: 42px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+form button {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+
+}
+
+form label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+form div:nth-child(-n + 2) {
+    flex-basis: 100%;
+}
+
+form div:nth-child(n + 3) {
+    flex-basis: calc(50% - 5px);
+}
+
+input#type {
+    appearance: none;
+    position: absolute;
+}
+
+#form-error {
+    color: rgb(249, 92, 92);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: var(--text-color);
+    border-radius: 5px;
+    position: relative;
+}
+
+.option span {
+    width: 50%;
+    text-align: center;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.option::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 0;
+    background-color: var(--bg-color);
+    height: calc(100% - 10px);
+    width: calc(50% - 10px);
+    transform: translateX(5px);
+    border-radius: inherit;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    transition: all 200ms;
+}
+
+input#type:checked+.option::before {
+    left: 50%;
+}
+
+#category,
+#category-filter {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    background-color: var(--main-color);
+    border-radius: 12px;
+    color: var(--bg-color);
+    margin-top: 5px;
+}
+
+label[for="category"] {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* .custom-category-fields {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1rem;
+} */
+
+/* #custom-emoji {
+    width: 60px;
+    text-align: center;
+} */
+
+ul {
+    list-style: none;
+}
+
+ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 5px 10px;
+    position: relative;
+
+}
+
+ul li:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.name {
+    flex: 1;
+
+}
+
+.name h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.name p {
+    font-size: 0.8rem;
+    color: var(--bg-color);
+}
+
+.amount {
+    font-weight: 600;
+
+}
+
+.income span {
+    color: #00ff87;
+}
+
+/* .expence span {
+    color: #ff5e5e;
+} */
+
+.action {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #f00;
+    color: #fff;
+    height: 100%;
+    width: 50px;
+    display: grid;
+    place-items: center;
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+    transform-origin: right;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+
+}
+
+ul li:hover .action {
+    transform: scaleX(1);
+}
+
+.action svg {
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+
+}
+
+#status {
+    text-align: center;
+    margin-bottom: 0.5rem;
+
+
+}
+
+.edit-btn {
+    background: transparent;
+    border: none;
+    color: rgb(175, 4, 4);
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.edit-btn:hover {
+    transform: scale(1.2);
+}
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: var(--midBlue-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    color: var(--text-color);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-content select {
+    padding: 8px;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-actions button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#confirm-delete-btn {
+    background: #ff4f4f;
+    color: #fff;
+}
+
+#cancel-delete-btn {
+    background: #ccc;
+    color: #000;
+}
+
+
+footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-color);
+    margin-top: 1rem;
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 500px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    form div:nth-child(n + 3) {
+        flex-basis: 100%;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    main {
+        padding: 0.5rem;
+    }
+}
