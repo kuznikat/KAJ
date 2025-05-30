@@ -25,6 +25,15 @@ categorySelect.addEventListener("change", () => {
     }
 });
 
+let isMuted = false;
+
+const muteToggle = document.getElementById("mute-toggle");
+muteToggle.addEventListener("click", () => {
+    isMuted = !isMuted;
+    muteToggle.textContent = isMuted ? "🔇 Sound Off" : "🔈 Sound On";
+});
+
+
 
 const categoryFilter = document.getElementById("category-filter");
 const customFields = document.getElementById("custom-category-fields");
@@ -253,6 +262,16 @@ function addTransaction(e) {
         category,
 
     });
+
+    if (!isMuted) {
+        const soundId = fData.get("type") === "on" ? "income-sound" : "expense-sound";
+        const sound = document.getElementById(soundId);
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(err => console.warn("Sound playback failed:", err));
+        }
+    }
+
 
     form.reset();
     updateBalance();
